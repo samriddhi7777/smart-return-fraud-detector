@@ -1,6 +1,5 @@
 """
-Smart Return Fraud Detector API - Simple Version
-Deployed on Render
+Smart Return Fraud Detector API - Production Ready
 """
 
 from fastapi import FastAPI
@@ -17,7 +16,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Health check
+# Root endpoint
 @app.get("/")
 def root():
     return {
@@ -25,12 +24,14 @@ def root():
         "status": "running",
         "version": "1.0.0",
         "endpoints": {
+            "/": "GET - This info",
             "/health": "GET - Health check",
             "/predict": "POST - Predict fraud",
             "/docs": "GET - API Documentation"
         }
     }
 
+# Health check
 @app.get("/health")
 def health():
     return {
@@ -54,24 +55,23 @@ class PredictionRequest(BaseModel):
 
 @app.post("/predict")
 def predict(request: PredictionRequest):
-    """
-    Predict fraud risk for a return
-    """
-    # Simple rule-based prediction (will be replaced with ML model later)
+    """Predict fraud risk for a return"""
+    
+    # Calculate risk score
     risk_score = 0.0
     
-    # Rule 1: High return rate
+    # Rule 1: Return rate
     return_rate = request.total_returns / max(request.total_orders, 1)
     if return_rate > 0.6:
         risk_score += 0.4
     
-    # Rule 2: High value item
+    # Rule 2: High value
     if request.price > 200:
         risk_score += 0.2
     
     # Rule 3: Suspicious reason
-    suspicious_reasons = ['Did not like it', 'No longer needed', 'Found better price', 'Changed mind']
-    if request.return_reason in suspicious_reasons:
+    suspicious = ['Did not like it', 'No longer needed', 'Found better price', 'Changed mind']
+    if request.return_reason in suspicious:
         risk_score += 0.2
     
     # Rule 4: Near deadline
@@ -82,7 +82,6 @@ def predict(request: PredictionRequest):
     if request.price > request.avg_order_value * 2.5:
         risk_score += 0.1
     
-    # Cap at 1.0
     risk_score = min(risk_score, 1.0)
     
     # Determine risk level
@@ -100,13 +99,8 @@ def predict(request: PredictionRequest):
         "risk_score": risk_score,
         "prediction": prediction,
         "risk_level": risk_level,
-        "model_used": "rule-based (simplified)",
-        "timestamp": datetime.now().isoformat(),
-        "top_features": [
-            {"feature": "return_rate", "value": return_rate, "importance": 0.4},
-            {"feature": "price", "value": request.price, "importance": 0.2},
-            {"feature": "suspicious_reason", "value": 1 if request.return_reason in suspicious_reasons else 0, "importance": 0.2}
-        ]
+        "model_used": "rule-based",
+        "timestamp": datetime.now().isoformat()
     }
 
 @app.get("/model/stats")
@@ -114,9 +108,7 @@ def model_stats():
     return {
         "model_name": "rule-based",
         "version": "1.0.0",
-        "features": 10,
-        "status": "active",
-        "message": "This is a simplified version. Full ML model coming soon!"
+        "status": "active"
     }
 
 if __name__ == "__main__":
