@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import random
 
+# Create FastAPI app
 app = FastAPI(
     title="Smart Return Fraud Detector API",
     description="ML-based fraud detection for e-commerce returns",
@@ -136,7 +137,7 @@ async def predict(request: PredictionRequest):
         risk_level=risk_level,
         model_used="rule-based-v1",
         timestamp=datetime.now().isoformat(),
-        top_features=features[:5]  # Return top 5 features
+        top_features=features[:5]
     )
 
 @app.get("/model/stats")
@@ -157,6 +158,9 @@ async def model_stats():
         "accuracy": "N/A (rule-based)",
         "deployed_at": datetime.now().isoformat()
     }
+
+# This is required for Render
+app = app
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
