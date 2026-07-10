@@ -1,6 +1,6 @@
 """
 Smart Return Fraud Detector API - Minimal Version
-No external dependencies - uses only Python standard library
+Pure Python HTTP server
 """
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -24,7 +24,7 @@ class FraudAPIHandler(BaseHTTPRequestHandler):
                 "endpoints": {
                     "/": "GET - API information",
                     "/health": "GET - Health check",
-                    "/docs": "GET - API Documentation"
+                    "/predict": "POST - Predict fraud risk"
                 }
             }
             self.wfile.write(json.dumps(response).encode())
