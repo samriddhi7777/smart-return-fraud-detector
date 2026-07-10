@@ -1,11 +1,8 @@
 """
-Smart Return Fraud Detector API
+Smart Return Fraud Detector API - Minimal Version
 """
 
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Dict, Any
-import os
 from datetime import datetime
 
 app = FastAPI(
@@ -14,7 +11,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Root endpoint
 @app.get("/")
 async def root():
     return {
@@ -29,7 +25,6 @@ async def root():
         }
     }
 
-# Health check
 @app.get("/health")
 async def health():
     return {
@@ -38,47 +33,32 @@ async def health():
         "timestamp": datetime.now().isoformat()
     }
 
-# Prediction model
-class PredictionRequest(BaseModel):
-    account_age_days: float
-    total_orders: float
-    avg_order_value: float
-    total_returns: float
-    price: float
-    days_since_delivery: float
-    payment_method: str
-    return_reason: str
-    item_category: str
-    return_method: str
-
 @app.post("/predict")
-async def predict(request: PredictionRequest):
+async def predict(request: dict):
     """Predict fraud risk for a return"""
     
     risk_score = 0.0
-    features = []
     
-    # Return rate
-    return_rate = request.total_returns / max(request.total_orders, 1)
+    # Simple rule-based prediction
+    total_returns = request.get('total_returns', 0)
+    total_orders = request.get('total_orders', 1)
+    return_rate = total_returns / max(total_orders, 1)
+    
     if return_rate > 0.6:
         risk_score += 0.35
-        features.append({"feature": "High return rate", "value": return_rate, "impact": 0.35})
     
-    # Price
-    if request.price > 200:
+    price = request.get('price', 0)
+    if price > 200:
         risk_score += 0.2
-        features.append({"feature": "High value item", "value": request.price, "impact": 0.2})
     
-    # Suspicious reason
+    reason = request.get('return_reason', '')
     suspicious = ['Did not like it', 'No longer needed', 'Found better price', 'Changed mind']
-    if request.return_reason in suspicious:
+    if reason in suspicious:
         risk_score += 0.2
-        features.append({"feature": "Suspicious reason", "value": request.return_reason, "impact": 0.2})
     
-    # Near deadline
-    if request.days_since_delivery > 25:
+    days = request.get('days_since_delivery', 0)
+    if days > 25:
         risk_score += 0.15
-        features.append({"feature": "Near deadline", "value": request.days_since_delivery, "impact": 0.15})
     
     risk_score = min(risk_score, 1.0)
     
@@ -97,8 +77,7 @@ async def predict(request: PredictionRequest):
         "prediction": prediction,
         "risk_level": risk_level,
         "model_used": "rule-based-v1",
-        "timestamp": datetime.now().isoformat(),
-        "top_features": features[:5]
+        "timestamp": datetime.now().isoformat()
     }
 
 @app.get("/model/stats")
@@ -109,6 +88,3 @@ async def model_stats():
         "status": "active",
         "deployed_at": datetime.now().isoformat()
     }
-
-# Required for Render
-app = app
