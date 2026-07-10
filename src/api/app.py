@@ -1,5 +1,5 @@
 """
-Smart Return Fraud Detector API - Simple Working Version
+Smart Return Fraud Detector API - Production Ready
 """
 
 from fastapi import FastAPI, HTTPException
@@ -13,7 +13,9 @@ import uvicorn
 app = FastAPI(
     title="Smart Return Fraud Detector API",
     description="ML-based fraud detection for e-commerce returns",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 # Root endpoint
@@ -27,7 +29,9 @@ async def root():
             "/": "GET - API information",
             "/health": "GET - Health check",
             "/predict": "POST - Predict fraud risk",
-            "/docs": "GET - API Documentation"
+            "/model/stats": "GET - Model statistics",
+            "/docs": "GET - API Documentation",
+            "/redoc": "GET - API Documentation (ReDoc)"
         }
     }
 
@@ -127,11 +131,23 @@ async def model_stats():
         "model_name": "rule-based-v1",
         "version": "1.0.0",
         "type": "rule-based",
+        "features": [
+            "return_rate",
+            "price_anomaly",
+            "price_to_avg_ratio",
+            "suspicious_reason",
+            "near_deadline"
+        ],
         "status": "active",
+        "accuracy": "N/A (rule-based)",
         "deployed_at": datetime.now().isoformat()
     }
 
-# For Render
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=port,
+        reload=False
+    )
