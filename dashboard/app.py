@@ -1,13 +1,12 @@
 """
 Smart Return Fraud Detector - Dashboard
+Simple version that calls the live API
 """
 
 import streamlit as st
 import requests
 import json
-import pandas as pd
 from datetime import datetime
-import time
 
 # Page config
 st.set_page_config(
@@ -16,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# API URL - Update this if your Render URL is different
+# API URL (your live Render API)
 API_URL = "https://fraud-detector-api.onrender.com"
 
 # Title
@@ -32,7 +31,7 @@ def check_api():
         return False
 
 # Sidebar
-st.sidebar.title("🎛️ Controls")
+st.sidebar.title("🎛️ Dashboard Controls")
 
 # API Status
 with st.sidebar:
