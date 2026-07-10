@@ -1,1 +1,1 @@
-uvicorn==0.24.0
+# No external dependencies needed
