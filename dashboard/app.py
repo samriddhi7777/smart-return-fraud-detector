@@ -5,7 +5,6 @@ Smart Return Fraud Detector - Complete Dashboard
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
 import plotly.express as px
 import plotly.graph_objects as go
 import requests
@@ -92,9 +91,7 @@ view_option = st.sidebar.radio(
 if view_option == "📊 Overview":
     st.header("📊 Dataset Overview")
     
-    # Try to load data from API or local
     try:
-        # Sample data for demonstration
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
@@ -108,7 +105,6 @@ if view_option == "📊 Overview":
         
         st.markdown("---")
         
-        # Fraud distribution
         col1, col2 = st.columns(2)
         
         with col1:
@@ -139,14 +135,12 @@ if view_option == "📊 Overview":
         
     except Exception as e:
         st.info("📊 Loading sample data for demonstration")
-        st.warning("Connect to API for live data")
 
 # Predictions Tab
 elif view_option == "📈 Predictions":
     st.header("📈 Batch Predictions")
     st.info("Enter multiple returns to predict fraud risk")
     
-    # Simple batch prediction form
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -156,7 +150,6 @@ elif view_option == "📈 Predictions":
         with st.spinner("Generating predictions..."):
             results = []
             for i in range(num_returns):
-                # Random sample data
                 data = {
                     "account_age_days": np.random.randint(30, 730),
                     "total_orders": np.random.randint(1, 50),
@@ -186,7 +179,6 @@ elif view_option == "📈 Predictions":
             if results:
                 df = pd.DataFrame(results)
                 
-                # Show results
                 col1, col2 = st.columns(2)
                 
                 with col1:
@@ -202,7 +194,6 @@ elif view_option == "📈 Predictions":
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
-                # Summary metrics
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.metric("Total Predictions", len(results))
@@ -291,7 +282,6 @@ elif view_option == "🔍 Single Prediction":
                         with col3:
                             st.markdown(f'<div class="metric-card"><h3>Risk Level</h3><h1 class="risk-{risk_level.lower()}">{risk_level}</h1></div>', unsafe_allow_html=True)
                         
-                        # Top features
                         if 'top_features' in result and result['top_features']:
                             st.subheader("🔍 Key Risk Factors")
                             for feature in result['top_features'][:5]:
@@ -313,7 +303,6 @@ elif view_option == "📋 Model Performance":
     
     st.info(f"Showing performance for: **Rule-based Model**")
     
-    # Sample metrics (since we're using rule-based model)
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -331,7 +320,6 @@ elif view_option == "📋 Model Performance":
     
     with col1:
         st.subheader("📊 Confusion Matrix")
-        # Sample confusion matrix
         fig = px.imshow(
             [[231, 18], [15, 61]],
             text_auto=True,
@@ -346,7 +334,6 @@ elif view_option == "📋 Model Performance":
     
     with col2:
         st.subheader("📈 ROC Curve")
-        # Sample ROC curve
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
