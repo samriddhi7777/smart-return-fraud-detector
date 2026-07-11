@@ -1,5 +1,13 @@
-streamlit
-plotly
+fastapi
+uvicorn[standard]
+xgboost
+lightgbm
+scikit-learn
+shap
+networkx
 pandas
 numpy
 requests
+faker
+streamlit
+plotly
