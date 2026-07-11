@@ -16,8 +16,7 @@
 |---------|-----|
 | **🚀 API** | https://smart-return-fraud-detector.onrender.com |
 | **📚 API Docs** | https://smart-return-fraud-detector.onrender.com/docs |
-| **📊 Dashboard** | https://smart-return-fraud-detector.streamlit.app |
-
+| **📊 Dashboard** | https://smart-return-fraud-detector-ezglsfjtxlztdjvucqjyxe.streamlit.app |
 ---
 
 ## 📋 Overview
